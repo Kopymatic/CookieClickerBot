@@ -1,4 +1,4 @@
-import Eris, { Interaction } from "Eris";
+import Eris, { ComponentInteraction, Interaction } from "Eris";
 import global from "../global";
 
 export interface MenuButton {
@@ -26,14 +26,10 @@ export default class Menu {
         }, timeout);
     }
 
-    onInteraction(interaction: Interaction): void {
-        console.log("interaction recieved");
-        console.log(typeof interaction);
-        if (interaction instanceof Eris.ComponentInteraction) {
-            console.log("Its a component interaction");
+    onInteraction(interaction: ComponentInteraction): void {
+        if (interaction.constructor.name === "ComponentInteraction") {
             let custom_id = interaction.data.custom_id;
             this.buttons.forEach((value: MenuButton) => {
-                console.log("In foreach");
                 if (value.button.custom_id === custom_id) {
                     console.log("wow");
                     value.func(interaction);
