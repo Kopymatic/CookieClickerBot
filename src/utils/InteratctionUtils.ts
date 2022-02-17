@@ -21,4 +21,14 @@ export default class InteractionUtils {
         let options: any = interaction.data.options;
         return options;
     }
+
+    public static isInDm(
+        interaction: Eris.CommandInteraction | Eris.ComponentInteraction
+    ): boolean {
+        if (interaction.member == undefined || interaction.member == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

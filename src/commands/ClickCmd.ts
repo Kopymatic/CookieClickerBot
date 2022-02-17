@@ -4,7 +4,6 @@ import InteractionUtils from "../utils/InteratctionUtils";
 import SlashCommand from "../utils/SlashCommand";
 import { ButtonStyles, ComponentTypes } from "../utils/CommandUtils";
 import global from "../global";
-import Menu from "../menus/Menu";
 import ClickMenu from "../menus/ClickMenu";
 
 export default class ClickCmd extends SlashCommand {
@@ -13,6 +12,11 @@ export default class ClickCmd extends SlashCommand {
         this.name = "Click";
         this.description = "Click the cookie!";
         this.onRun = async (interaction) => {
+            if (InteractionUtils.isInDm(interaction)) {
+                interaction.createMessage({ content: "This command is not allowed in dms!" });
+                return;
+            }
+
             await interaction.acknowledge();
 
             let user = InteractionUtils.getUser(interaction);
