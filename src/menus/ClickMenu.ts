@@ -1,72 +1,73 @@
-import Eris, { ActionRowComponents } from "eris";
-import global from "../global";
+import { EventEmitter } from "events";
+import Eris, {
+    Client,
+    ComponentInteraction,
+    InteractionButton,
+    Interaction,
+    CommandInteraction,
+    InteractionContent,
+    ActionRowComponents,
+} from "eris";
+import InteractionUtils from "../utils/InteratctionUtils";
+import Menu, { MenuButton, MenuOptions } from "./Menu";
 import { ClickerUser } from "../models";
-import { ButtonStyles, ComponentTypes } from "../utils/CommandUtils";
-import Menu from "./Menu";
+import global from "../global";
+import { ComponentTypes } from "../utils/CommandUtils";
 
-export default class ClickMenu {
-    clickerUser: ClickerUser;
-    interaction: Eris.CommandInteraction;
-    cookieButton: ActionRowComponents;
-
-    constructor(clickerUser: ClickerUser, interaction: Eris.CommandInteraction) {
+export default class ClickMenu extends Menu {
+    private clickerUser: ClickerUser;
+    private button: MenuButton;
+    constructor(
+        client: Client,
+        interaction: CommandInteraction,
+        message: InteractionContent,
+        clickerUser: ClickerUser,
+        button: MenuButton
+    ) {
+        super(client, interaction, message, [button], {
+            allowedUsers: [InteractionUtils.getUser(interaction).id],
+            maxTime: 120000,
+        });
+        this.button = button;
         this.clickerUser = clickerUser;
-        this.interaction = interaction;
-
-        this.cookieButton = {
-            type: ComponentTypes.Button,
-            custom_id: `${Math.random()}|CookieButton`,
-            style: ButtonStyles.Success,
-            emoji: { name: "🍪" },
-        };
-
-        let menu = new Menu(
-            global.bot,
-            interaction,
-            {
-                embeds: [
-                    {
-                        title: "CookieClicker!",
-                        description: `You currently have ${clickerUser.cookies.toLocaleString(
-                            "en-US"
-                        )} cookies! \nClick the button to get more`,
-                        color: global.defaultColor,
-                    },
-                ],
-                components: [
-                    {
-                        type: ComponentTypes.ActionRow,
-                        components: [this.cookieButton],
-                    },
-                ],
-            },
-
-            [{ button: this.cookieButton, func: this.onClick }],
-            { allowedUsers: [clickerUser.userID], maxTime: 120000 }
-        );
     }
 
-    async onClick(interaction: Eris.ComponentInteraction): Promise<void> {
+    protected handleButtonPress = (interaction: Interaction): Promise<void> => {
+        if (!(interaction instanceof ComponentInteraction)) {
+            return;
+        }
+        if (InteractionUtils.isInDm(interaction)) {
+            return;
+        }
+
+        let custom_id = interaction.data.custom_id;
+        if (custom_id === this.button.button.custom_id) {
+            this.onClick(interaction, this.clickerUser, this.message);
+        }
+
+        this.timeout = this.resetTimeout();
+    };
+
+    public onClick = async (
+        interaction: Eris.ComponentInteraction,
+        clickerUser: ClickerUser,
+        message: InteractionContent
+    ): Promise<void> => {
         interaction.acknowledge();
-        this.clickerUser.cookies++;
-        this.clickerUser.save();
-        let original = await this.interaction.getOriginalMessage();
+        clickerUser.cookies++;
+        clickerUser.save();
+        let original = await interaction.getOriginalMessage();
         original.edit({
             embeds: [
                 {
                     title: "CookieClicker!",
-                    description: `You currently have ${this.clickerUser.cookies.toLocaleString(
+                    description: `You currently have ${clickerUser.cookies.toLocaleString(
                         "en-US"
                     )} cookies! \nClick the button to get more`,
                     color: global.defaultColor,
                 },
             ],
-            components: [
-                {
-                    type: ComponentTypes.ActionRow,
-                    components: [this.cookieButton],
-                },
-            ],
+            components: message.components,
         });
-    }
+    };
 }

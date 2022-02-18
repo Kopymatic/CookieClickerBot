@@ -9,6 +9,7 @@ export default class TestCmd extends SlashCommand {
         super();
         this.name = "Test";
         this.description = "TEST!";
+        this.toDelete = true;
         this.onRun = async (interaction) => {
             await interaction.createMessage("TEST");
             let user = InteractionUtils.getUser(interaction);

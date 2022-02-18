@@ -10,12 +10,12 @@ import {
 import InteractionUtils from "../utils/InteratctionUtils";
 
 export default class Menu extends EventEmitter {
-    private client: Client;
-    private interaction: CommandInteraction;
-    private message: InteractionContent;
-    private buttons: MenuButton[];
-    private readonly options: MenuOptions;
-    private timeout: NodeJS.Timeout;
+    protected client: Client;
+    protected interaction: CommandInteraction;
+    protected message: InteractionContent;
+    protected buttons: MenuButton[];
+    protected readonly options: MenuOptions;
+    protected timeout: NodeJS.Timeout;
 
     constructor(
         client: Client,
@@ -51,22 +51,17 @@ export default class Menu extends EventEmitter {
         this.interaction.createFollowup(this.message);
     }
 
-    private handleButtonPress = async (interaction: Interaction): Promise<void> => {
-        console.log("interaction recieved");
+    protected handleButtonPress = (interaction: Interaction): Promise<void> => {
         if (!(interaction instanceof ComponentInteraction)) {
-            console.log("WHYYYYYYYYYYYYYY");
             return;
         }
         if (InteractionUtils.isInDm(interaction)) {
-            console.log("???");
             return;
         }
 
         let custom_id = interaction.data.custom_id;
         this.buttons.forEach((button) => {
-            console.log("In foreach");
             if (button.button.custom_id === custom_id) {
-                console.log("wow");
                 button.func(interaction);
             }
         });
@@ -74,18 +69,18 @@ export default class Menu extends EventEmitter {
         this.timeout = this.resetTimeout();
     };
 
-    private resetTimeout = (): NodeJS.Timeout => {
+    protected resetTimeout = (): NodeJS.Timeout => {
         clearTimeout(this.timeout);
         return setTimeout(() => this.emit("cancel", null), this.options.maxTime);
     };
 }
 
-class MenuOptions {
+export class MenuOptions {
     public allowedUsers: string[];
     public maxTime: number = 120000;
 }
 
-interface MenuButton {
+export interface MenuButton {
     button: InteractionButton;
     func: Function;
 }
