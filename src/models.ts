@@ -1,7 +1,7 @@
 import Eris from "eris";
-import { DataTypes, Model, where } from "sequelize";
+import { DataTypes, Model, Sequelize, where } from "sequelize";
 import global from "./global";
-import ref from "./utils/ClickerReference";
+import ref, { Building, Buildings } from "./utils/ClickerReference";
 
 export function setUpModels() {
     const database = global.database;
@@ -175,6 +175,7 @@ export class CommandStats extends Model {
 
 export class ClickerUser extends Model {
     // Specifying data types on the class itself so the compiler doesnt complain
+    [index: string]: any;
     public id: number;
     public guildID: string;
     public userID: string;
@@ -205,26 +206,26 @@ export class ClickerUser extends Model {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    public getCPS(): bigint {
-        let totalCps: bigint = 0n;
-        totalCps += BigInt(Math.round(this.cursors * ref.cursor.cps));
-        totalCps += BigInt(this.grandmas * ref.grandma.cps);
-        totalCps += BigInt(this.farms * ref.farm.cps);
-        totalCps += BigInt(this.mines * ref.mine.cps);
-        totalCps += BigInt(this.factories * ref.factory.cps);
-        totalCps += BigInt(this.banks * ref.bank.cps);
-        totalCps += BigInt(this.temples * ref.temple.cps);
-        totalCps += BigInt(this.wizardTowers * ref.wizardTower.cps);
-        totalCps += BigInt(this.shipments * ref.shipment.cps);
-        totalCps += BigInt(this.alchemyLabs * ref.alchemyLab.cps);
-        totalCps += BigInt(this.portals * ref.portal.cps);
-        totalCps += BigInt(this.timeMachines * ref.timeMachine.cps);
-        totalCps += BigInt(this.antimatterCondensers * ref.antimatterCondenser.cps);
-        totalCps += BigInt(this.prisms * ref.prism.cps);
-        totalCps += BigInt(this.chancemakers * ref.chancemaker.cps);
-        totalCps += BigInt(this.fractalEngines * ref.fractalEngine.cps);
-        totalCps += BigInt(this.javascriptConsoles * ref.javascriptConsoles.cps);
-        totalCps += BigInt(this.idleverses * ref.idleverse.cps);
+    public getCPS(): number {
+        let totalCps: number = 0;
+        totalCps += this.cursors * ref.cursors.cps;
+        totalCps += this.grandmas * ref.grandmas.cps;
+        totalCps += this.farms * ref.farms.cps;
+        totalCps += this.mines * ref.mines.cps;
+        totalCps += this.factories * ref.factories.cps;
+        totalCps += this.banks * ref.banks.cps;
+        totalCps += this.temples * ref.temples.cps;
+        totalCps += this.wizardTowers * ref.wizardTowers.cps;
+        totalCps += this.shipments * ref.shipments.cps;
+        totalCps += this.alchemyLabs * ref.alchemyLabs.cps;
+        totalCps += this.portals * ref.portals.cps;
+        totalCps += this.timeMachines * ref.timeMachines.cps;
+        totalCps += this.antimatterCondensers * ref.antimatterCondensers.cps;
+        totalCps += this.prisms * ref.prisms.cps;
+        totalCps += this.chancemakers * ref.chancemakers.cps;
+        totalCps += this.fractalEngines * ref.fractalEngines.cps;
+        totalCps += this.javascriptConsoles * ref.javascriptConsoles.cps;
+        totalCps += this.idleverses * ref.idleverses.cps;
         return totalCps;
     }
 
@@ -235,12 +236,30 @@ export class ClickerUser extends Model {
         let now = new Date(Date.now());
         let secsSinceLastUpdate = Math.round((now.getTime() - this.lastCpsUpdate.getTime()) / 1000);
 
-        console.log(secsSinceLastUpdate);
-        console.log(this.getCPS());
-
         this.lastCpsUpdate = now;
 
-        this.cookies += BigInt(secsSinceLastUpdate) * this.getCPS();
+        this.cookies += BigInt(Math.round(secsSinceLastUpdate * this.getCPS()));
+    }
+
+    public getBuildingAmount(building: number): number {
+        let found = ref.buildings[building];
+        if (found !== null || found !== undefined) {
+            return this[found.internalName];
+        } else {
+            throw new Error("you did a fucky wucky");
+        }
+    }
+
+    public getCost(building: number): bigint {
+        let amount = this.getBuildingAmount(building);
+
+        let attempted = ref.buildings[building];
+
+        if (attempted instanceof Building) {
+            return attempted.baseCost * BigInt(Math.pow(ref.COST_MULTIPLIER, amount));
+        } else {
+            throw new Error("Uh oh! A bad happened");
+        }
     }
 
     public static async findUser(
@@ -252,7 +271,7 @@ export class ClickerUser extends Model {
                 where: { userID: user.id, guildID: guildID, lastKnownUsername: user.username },
             })
         )[0];
-        it.cookies = BigInt(it.cookies);
+        it.cookies = BigInt(it.cookies); //Sequelize puts this in as a string instead of a bigint
         return it;
     }
 }

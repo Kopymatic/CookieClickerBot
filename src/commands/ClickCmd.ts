@@ -4,7 +4,6 @@ import InteractionUtils from "../utils/InteratctionUtils";
 import SlashCommand from "../utils/SlashCommand";
 import { ButtonStyles, ComponentTypes } from "../utils/CommandUtils";
 import global from "../global";
-import ClickMenu from "../menus/ClickMenu";
 import Menu from "../menus/Menu";
 
 export default class ClickCmd extends SlashCommand {
@@ -28,7 +27,7 @@ export default class ClickCmd extends SlashCommand {
             let cookieButton: ActionRowComponents = {
                 type: ComponentTypes.Button,
                 custom_id: `${Math.random()}|CookieButton`,
-                style: ButtonStyles.Success,
+                style: ButtonStyles.Primary,
                 emoji: { name: "🍪" },
             };
 
