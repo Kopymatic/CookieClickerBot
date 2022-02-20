@@ -47,19 +47,16 @@ export default class ShopCmd extends SlashCommand {
         } else {
             afford = "can't";
         }
+
+        let name = this.capitalizeFirstLetter(ref.buildings[index].internalName);
+        let cost = clickerUser.getCost(index).toLocaleString("en-US");
+        let cps = ref.buildings[index].cps.toLocaleString("en-US");
+        let amount = clickerUser.getBuildingAmount(index).toLocaleString("en-US");
+        let cookies = clickerUser.cookies.toLocaleString("en-US");
+
         return {
-            title: this.capitalizeFirstLetter(ref.buildings[index].internalName),
-            description: `This costs ${clickerUser
-                .getCost(index)
-                .toLocaleString("en-US")} cookies. \n It makes ${ref.buildings[
-                index
-            ].cps.toLocaleString("en-US")} cookies per second.\nYou have ${clickerUser
-                .getBuildingAmount(index)
-                .toLocaleString("en-US")} ${
-                ref.buildings[index].internalName
-            }.\nYou **${afford}** afford this with your ${clickerUser.cookies.toLocaleString(
-                "en-US"
-            )} cookies.\n\nUse /buy to buy a building!`,
+            title: name,
+            description: `This costs ${cost} cookies.\nIt makes ${cps} cookies per second.\nYou have ${amount} ${name}.\nYou **${afford}** afford this with your ${cookies} cookies.\n\nUse /buy to buy a building!`,
             color: global.defaultColor,
             type: "rich",
         };
