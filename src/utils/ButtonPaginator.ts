@@ -36,13 +36,11 @@ export class ButtonPaginator extends EventEmitter {
     }
 
     private async initialize() {
-        await this.getEmojis();
-
         this.backButton = {
             type: ComponentTypes.Button,
             label: "",
             custom_id: `BackButton|${this.message.id}`,
-            emoji: this.options.backButtonEmoji,
+            emoji: { name: "◀️" },
             style: ButtonStyles.Primary,
         };
 
@@ -50,7 +48,7 @@ export class ButtonPaginator extends EventEmitter {
             type: ComponentTypes.Button,
             label: "",
             custom_id: `ForwardButton|${this.message.id}`,
-            emoji: this.options.forwardButtonEmoji,
+            emoji: { name: "▶️" },
             style: ButtonStyles.Primary,
         };
 
@@ -58,7 +56,7 @@ export class ButtonPaginator extends EventEmitter {
             type: ComponentTypes.Button,
             label: "",
             custom_id: `SkipBackButton|${this.message.id}`,
-            emoji: this.options.skipBackButtonEmoji,
+            emoji: { name: "⏪" },
             style: ButtonStyles.Primary,
         };
 
@@ -66,7 +64,7 @@ export class ButtonPaginator extends EventEmitter {
             type: ComponentTypes.Button,
             label: "",
             custom_id: `SkipForwardButton|${this.message.id}`,
-            emoji: this.options.skipForwardButtonEmoji,
+            emoji: { name: "⏩" },
             style: ButtonStyles.Primary,
         };
 
@@ -119,15 +117,7 @@ export class ButtonPaginator extends EventEmitter {
         if (this.message.id !== interaction.message.id) {
             return;
         } else {
-            interaction.acknowledge();
-
-            if (
-                this.options.backButtonEmoji == null ||
-                this.options.skipBackButtonEmoji == null ||
-                this.options.forwardButtonEmoji == null ||
-                this.options.skipForwardButtonEmoji == null
-            )
-                await this.getEmojis();
+            await interaction.acknowledge();
 
             if (interaction.data.custom_id == this.backButton.custom_id) {
                 //check all buttons
@@ -183,40 +173,9 @@ export class ButtonPaginator extends EventEmitter {
         clearTimeout(this.timeout);
         return setTimeout(() => this.emit("cancel", null), this.options.maxTime);
     };
-
-    private async getEmojis() {
-        if (this.options.backButtonEmoji == null) {
-            this.options.backButtonEmoji = await this.client.getRESTGuildEmoji(
-                "793293945437814797",
-                "894399421960294460"
-            );
-        }
-        if (this.options.skipBackButtonEmoji == null) {
-            this.options.skipBackButtonEmoji = await this.client.getRESTGuildEmoji(
-                "793293945437814797",
-                "894399421951918080"
-            );
-        }
-        if (this.options.forwardButtonEmoji == null) {
-            this.options.forwardButtonEmoji = await this.client.getRESTGuildEmoji(
-                "793293945437814797",
-                "894399422119682088"
-            );
-        }
-        if (this.options.skipForwardButtonEmoji == null) {
-            this.options.skipForwardButtonEmoji = await this.client.getRESTGuildEmoji(
-                "793293945437814797",
-                "894399422060965950"
-            );
-        }
-    }
 }
 
 class MenuCollectorOptions {
-    public backButtonEmoji?: Emoji;
-    public forwardButtonEmoji?: Emoji;
-    public skipBackButtonEmoji?: Emoji;
-    public skipForwardButtonEmoji?: Emoji;
     public allowedUsers: string[];
     public pages: Embed[];
     public maxTime: number;
