@@ -4,7 +4,9 @@ export default class InteractionUtils {
     /**
      * Get the user or member, guaranteed not null or undefined.
      */
-    public static getUser(interaction: Eris.CommandInteraction): Eris.Member | Eris.User {
+    public static getUser(
+        interaction: Eris.CommandInteraction | Eris.ComponentInteraction
+    ): Eris.Member | Eris.User {
         let user: Eris.Member | Eris.User;
         if (interaction.member == undefined || interaction.member == null) {
             user = interaction.user;

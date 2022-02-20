@@ -102,11 +102,9 @@ export default class BuyCmd extends SlashCommand {
         ];
         this.onRun = async (interaction) => {
             if (InteractionUtils.isInDm(interaction)) {
-                interaction.createMessage({ content: "This command is not allowed in dms!" });
+                interaction.createFollowup({ content: "This command is not allowed in dms!" });
                 return;
             }
-
-            await interaction.acknowledge();
 
             let user = InteractionUtils.getUser(interaction);
             let options = InteractionUtils.getOptions(interaction);
@@ -130,7 +128,6 @@ export default class BuyCmd extends SlashCommand {
                     disabled: oneDisabled,
                 },
                 func: async (interaction2: Eris.ComponentInteraction) => {
-                    await interaction2.acknowledge();
                     if (clickerUser.buy(buildingID, 1)) {
                         interaction2.createFollowup({
                             content: "Buying success!",
@@ -156,7 +153,6 @@ export default class BuyCmd extends SlashCommand {
                     disabled: tenDisabled,
                 },
                 func: async (interaction2: Eris.ComponentInteraction) => {
-                    await interaction2.acknowledge();
                     if (clickerUser.buy(buildingID, 10)) {
                         interaction2.createFollowup({
                             content: "Buying success!",
@@ -182,7 +178,6 @@ export default class BuyCmd extends SlashCommand {
                     disabled: oneHundredDisabled,
                 },
                 func: async (interaction2: Eris.ComponentInteraction) => {
-                    await interaction2.acknowledge();
                     if (clickerUser.buy(buildingID, 100)) {
                         interaction2.createFollowup({
                             content: "Buying success!",
@@ -209,7 +204,6 @@ export default class BuyCmd extends SlashCommand {
                     disabled: maxBuy <= 0,
                 },
                 func: async (interaction2: Eris.ComponentInteraction) => {
-                    await interaction2.acknowledge();
                     if (clickerUser.buy(buildingID, maxBuy)) {
                         interaction2.createFollowup({
                             content: "Buying success!",

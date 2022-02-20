@@ -13,11 +13,9 @@ export default class ClickCmd extends SlashCommand {
         this.description = "Click the cookie!";
         this.onRun = async (interaction) => {
             if (InteractionUtils.isInDm(interaction)) {
-                interaction.createMessage({ content: "This command is not allowed in dms!" });
+                interaction.createFollowup({ content: "This command is not allowed in dms!" });
                 return;
             }
-
-            await interaction.acknowledge();
 
             let user = InteractionUtils.getUser(interaction);
             let clickerUser = await ClickerUser.findUser(user, interaction.guildID);
@@ -46,9 +44,9 @@ export default class ClickCmd extends SlashCommand {
                             },
                             {
                                 name: "Cookies Per Second",
-                                value: `You are making **${Math.round(
-                                    clickerUser.getCPS()
-                                ).toLocaleString("en-US")}** cookies per second!`,
+                                value: `You are making **${clickerUser
+                                    .getCPS()
+                                    .toLocaleString("en-US")}** cookies per second!`,
                             },
                             {
                                 name: `Its been ${secsSinceLastUpdate} seconds since the last update`,
@@ -76,7 +74,6 @@ export default class ClickCmd extends SlashCommand {
                     {
                         button: cookieButton,
                         func: async (interaction: ComponentInteraction) => {
-                            await interaction.acknowledge();
                             clickerUser.cookies++;
                             clickerUser.save();
                             let original = await interaction.getOriginalMessage();

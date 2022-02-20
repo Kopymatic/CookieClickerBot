@@ -141,8 +141,15 @@ bot.on("interactionCreate", (interaction) => {
         commands.forEach(async (command) => {
             if (command.name.toLowerCase() == interaction.data.name) {
                 //Once we figure out what command we recieved, acknowledge it and run its onRun function.
-                //interaction.acknowledge();
-                command.onRun(interaction);
+                await interaction.acknowledge();
+                try {
+                    await command.onRun(interaction);
+                } catch (error) {
+                    console.error(error);
+                    interaction.createFollowup(
+                        "There was an error executing your command! Contact Kopy about this!"
+                    );
+                }
 
                 //Do statistic tracking stuff
                 let commandStats = await CommandStats.findOrCreate({

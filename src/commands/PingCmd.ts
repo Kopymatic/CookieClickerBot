@@ -6,7 +6,7 @@ export default class Ping extends SlashCommand {
         this.name = "Ping";
         this.description = "Pong!";
         this.onRun = (interaction) => {
-            interaction.createMessage("Pong!");
+            interaction.createFollowup("Pong!");
         };
     }
 }

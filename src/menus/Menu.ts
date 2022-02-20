@@ -51,7 +51,7 @@ export default class Menu extends EventEmitter {
         this.interaction.createFollowup(this.message);
     }
 
-    protected handleButtonPress = (interaction: Interaction): Promise<void> => {
+    protected handleButtonPress = async (interaction: Interaction): Promise<void> => {
         if (!(interaction instanceof ComponentInteraction)) {
             return;
         }
@@ -59,10 +59,21 @@ export default class Menu extends EventEmitter {
             return;
         }
 
+        if (!this.options.allowedUsers.includes(InteractionUtils.getUser(interaction).id)) {
+            return;
+        }
+
         let custom_id = interaction.data.custom_id;
-        this.buttons.forEach((button) => {
+        this.buttons.forEach(async (button) => {
             if (button.button.custom_id === custom_id) {
-                button.func(interaction);
+                await interaction.acknowledge();
+                try {
+                    await button.func(interaction);
+                } catch (error) {
+                    interaction.createFollowup(
+                        "There was an error handling the button press. Contact Kopy about this!"
+                    );
+                }
             }
         });
 

@@ -13,11 +13,9 @@ export default class ShopCmd extends SlashCommand {
         this.description = "Look at what there is to buy!";
         this.onRun = async (interaction) => {
             if (InteractionUtils.isInDm(interaction)) {
-                interaction.createMessage({ content: "This command is not allowed in dms!" });
+                interaction.createFollowup({ content: "This command is not allowed in dms!" });
                 return;
             }
-
-            await interaction.acknowledge();
 
             let user = InteractionUtils.getUser(interaction);
             let clickerUser = await ClickerUser.findUser(user, interaction.guildID);

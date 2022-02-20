@@ -11,7 +11,7 @@ export default class TestCmd extends SlashCommand {
         this.description = "TEST!";
         this.toDelete = true;
         this.onRun = async (interaction) => {
-            await interaction.createMessage("TEST");
+            await interaction.createFollowup("TEST");
             let user = InteractionUtils.getUser(interaction);
             new ButtonPaginator(global.bot, await interaction.getOriginalMessage(), {
                 allowedUsers: [user.id],

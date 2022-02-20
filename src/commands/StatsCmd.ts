@@ -17,7 +17,7 @@ export default class StatsCmd extends SlashCommand {
                 user = interaction.member;
             }
 
-            await interaction.createMessage({
+            await interaction.createFollowup({
                 embeds: [
                     {
                         title: "Loading...",
