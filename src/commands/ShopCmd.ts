@@ -6,7 +6,7 @@ import global from "../global";
 import { ButtonPaginator } from "../utils/ButtonPaginator";
 import ref from "../utils/ClickerReference";
 
-export default class Shop extends SlashCommand {
+export default class ShopCmd extends SlashCommand {
     constructor() {
         super();
         this.name = "Shop";
@@ -53,11 +53,15 @@ export default class Shop extends SlashCommand {
             title: this.capitalizeFirstLetter(ref.buildings[index].internalName),
             description: `This costs ${clickerUser
                 .getCost(index)
-                .toLocaleString(
-                    "en-US"
-                )} cookies. \nYou **${afford}** afford this with your ${clickerUser.cookies.toLocaleString(
+                .toLocaleString("en-US")} cookies. \n It makes ${ref.buildings[
+                index
+            ].cps.toLocaleString("en-US")} cookies per second.\nYou have ${clickerUser
+                .getBuildingAmount(index)
+                .toLocaleString("en-US")} ${
+                ref.buildings[index].internalName
+            }.\nYou **${afford}** afford this with your ${clickerUser.cookies.toLocaleString(
                 "en-US"
-            )} cookies.`,
+            )} cookies.\n\nUse /buy to buy a building!`,
             color: global.defaultColor,
             type: "rich",
         };

@@ -21,7 +21,8 @@ export default class ClickCmd extends SlashCommand {
 
             let user = InteractionUtils.getUser(interaction);
             let clickerUser = await ClickerUser.findUser(user, interaction.guildID);
-            clickerUser.updateCookies();
+            clickerUser.lastKnownUsername = user.username;
+            let secsSinceLastUpdate = clickerUser.updateCookies();
             clickerUser.save();
 
             let cookieButton: ActionRowComponents = {
@@ -34,10 +35,28 @@ export default class ClickCmd extends SlashCommand {
             let message: InteractionContent = {
                 embeds: [
                     {
-                        title: "CookieClicker!",
-                        description: `You currently have **${clickerUser.cookies.toLocaleString(
-                            "en-US"
-                        )}** cookies! \nClick the button to get more`,
+                        title: `${clickerUser.lastKnownUsername}'s Dashboard`,
+                        description: `Welcome to your dashboard!`,
+                        fields: [
+                            {
+                                name: "Cookies",
+                                value: `You have **${clickerUser.cookies.toLocaleString(
+                                    "en-US"
+                                )}** cookies!`,
+                            },
+                            {
+                                name: "Cookies Per Second",
+                                value: `You are making **${Math.round(
+                                    clickerUser.getCPS()
+                                ).toLocaleString("en-US")}** cookies per second!`,
+                            },
+                            {
+                                name: `Its been ${secsSinceLastUpdate} seconds since the last update`,
+                                value: `You made ${Math.round(
+                                    secsSinceLastUpdate * clickerUser.getCPS()
+                                ).toLocaleString("en-US")} cookies in that time!`,
+                            },
+                        ],
                         color: global.defaultColor,
                     },
                 ],
@@ -64,10 +83,30 @@ export default class ClickCmd extends SlashCommand {
                             original.edit({
                                 embeds: [
                                     {
-                                        title: "CookieClicker!",
-                                        description: `You currently have **${clickerUser.cookies.toLocaleString(
-                                            "en-US"
-                                        )}** cookies! \nClick the button to get more`,
+                                        title: `${clickerUser.lastKnownUsername}'s Dashboard`,
+                                        description: `Welcome to your dashboard!`,
+                                        fields: [
+                                            {
+                                                name: "Cookies",
+                                                value: `You have **${clickerUser.cookies.toLocaleString(
+                                                    "en-US"
+                                                )}** cookies!`,
+                                            },
+                                            {
+                                                name: "Cookies Per Second",
+                                                value: `You are making **${clickerUser
+                                                    .getCPS()
+                                                    .toLocaleString(
+                                                        "en-US"
+                                                    )}** cookies per second!`,
+                                            },
+                                            {
+                                                name: `Its been ${secsSinceLastUpdate} seconds since the last update`,
+                                                value: `You made ${Math.round(
+                                                    secsSinceLastUpdate * clickerUser.getCPS()
+                                                ).toLocaleString("en-US")} cookies in that time!`,
+                                            },
+                                        ],
                                         color: global.defaultColor,
                                     },
                                 ],
@@ -78,7 +117,7 @@ export default class ClickCmd extends SlashCommand {
                 ],
                 {
                     allowedUsers: [user.id],
-                    maxTime: 120000,
+                    maxTime: 30000,
                 }
             );
         };

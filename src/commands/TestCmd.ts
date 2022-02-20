@@ -15,7 +15,7 @@ export default class TestCmd extends SlashCommand {
             let user = InteractionUtils.getUser(interaction);
             new ButtonPaginator(global.bot, await interaction.getOriginalMessage(), {
                 allowedUsers: [user.id],
-                maxTime: 12000,
+                maxTime: 30000,
                 pages: [
                     { title: "pisdjfgioasjf", type: "rich" },
                     { title: "apsdjfipasdj", type: "rich" },

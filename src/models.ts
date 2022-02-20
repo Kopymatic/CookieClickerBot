@@ -231,34 +231,99 @@ export class ClickerUser extends Model {
 
     /**
      * Updates the cookies. REMEMBER TO CALL SAVE!!!
+     * Returns seconds since last update,
      */
-    public updateCookies() {
+    public updateCookies(): number {
         let now = new Date(Date.now());
         let secsSinceLastUpdate = Math.round((now.getTime() - this.lastCpsUpdate.getTime()) / 1000);
 
         this.lastCpsUpdate = now;
 
         this.cookies += BigInt(Math.round(secsSinceLastUpdate * this.getCPS()));
+        return secsSinceLastUpdate;
     }
 
     public getBuildingAmount(building: number): number {
         let found = ref.buildings[building];
-        if (found !== null || found !== undefined) {
+        if (found !== null && found !== undefined) {
             return this[found.internalName];
         } else {
             throw new Error("you did a fucky wucky");
         }
     }
 
-    public getCost(building: number): bigint {
-        let amount = this.getBuildingAmount(building);
+    public getCost(building: number, amountOwned?: number): bigint {
+        let amount: number;
+        if (amountOwned !== undefined && amountOwned !== null) {
+            amount = amountOwned;
+        } else {
+            amount = this.getBuildingAmount(building);
+        }
 
         let attempted = ref.buildings[building];
 
         if (attempted instanceof Building) {
-            return attempted.baseCost * BigInt(Math.pow(ref.COST_MULTIPLIER, amount));
+            //return attempted.baseCost * BigInt(Math.round(Math.pow(ref.COST_MULTIPLIER, amount))); //I dont like rounding here, but its necessary right now.
+            return BigInt(
+                Math.round(Number(attempted.baseCost) * Math.pow(ref.COST_MULTIPLIER, amount))
+            );
         } else {
             throw new Error("Uh oh! A bad happened");
+        }
+    }
+
+    //TODO: This is horrible.
+    public getMultiCost(building: number, amount: number): bigint {
+        let cost: bigint = 0n;
+        let hypotheticalAmount = this.getBuildingAmount(building);
+
+        for (let i = amount; i != 0; i--) {
+            cost += this.getCost(building, hypotheticalAmount);
+            hypotheticalAmount++;
+        }
+
+        return cost;
+    }
+
+    public checkBuy(building: number, amount: number): boolean {
+        let multiCost = this.getMultiCost(building, amount);
+        let cookies = this.cookies;
+
+        return cookies >= multiCost;
+    }
+
+    /**
+     * BUYING AUTOMATICALLY SAVES
+     *
+     * @param building
+     * @param amount
+     */
+    public buy(building: number, amount: number): boolean {
+        let multiCost = this.getMultiCost(building, amount);
+        let buildingObj = ref.buildings[building];
+
+        if (this.checkBuy(building, amount)) {
+            if (typeof this[buildingObj.internalName] !== "number") throw new Error("Oops");
+            else {
+                this[buildingObj.internalName] += amount;
+                this.cookies -= multiCost;
+                this.save();
+                return true;
+            }
+        } else {
+            console.log("aaaaaaaaa");
+        }
+    }
+
+    //TODO: This is terrible, ineffecient, and should not exist.
+    public getMaxBuy(building: number): number {
+        let toBuy = 1;
+        while (true) {
+            if (!this.checkBuy(building, toBuy)) {
+                return toBuy - 1;
+            } else {
+                toBuy++;
+            }
         }
     }
 

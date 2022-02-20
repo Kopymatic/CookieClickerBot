@@ -7,7 +7,7 @@ module global {
     export const version = config.version;
     export let name: string;
     export let token: string;
-    export const defaultColor = 0xff6fff; //I would load these from config.json but then id have to parse and ehhhhhh
+    export const defaultColor = 0xb38b6d; //I would load these from config.json but then id have to parse and ehhhhhh
     export const red = 0xed4245;
     export const green = 0x57f287;
     if (experimental) {
