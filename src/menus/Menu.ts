@@ -66,7 +66,13 @@ export default class Menu extends EventEmitter {
         let custom_id = interaction.data.custom_id;
         this.buttons.forEach(async (button) => {
             if (button.button.custom_id === custom_id) {
-                await interaction.acknowledge();
+                try {
+                    await interaction.acknowledge();
+                } catch (error) {
+                    console.error(error);
+                    return;
+                }
+
                 try {
                     await button.func(interaction);
                 } catch (error) {

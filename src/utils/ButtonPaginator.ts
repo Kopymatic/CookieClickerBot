@@ -117,7 +117,12 @@ export class ButtonPaginator extends EventEmitter {
         if (this.message.id !== interaction.message.id) {
             return;
         } else {
-            await interaction.acknowledge();
+            try {
+                await interaction.acknowledge();
+            } catch (error) {
+                console.error(error);
+                return;
+            }
 
             if (interaction.data.custom_id == this.backButton.custom_id) {
                 //check all buttons
