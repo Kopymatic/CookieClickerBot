@@ -56,7 +56,28 @@ export default class ShopCmd extends SlashCommand {
 
         return {
             title: name,
-            description: `This costs ${cost} cookies.\nIt makes ${cps} cookies per second.\nYou have ${amount} ${name}.\nYou **${afford}** afford this with your ${cookies} cookies.\n\nUse /buy to buy a building!`,
+            fields: [
+                {
+                    name: "Costs",
+                    value: `${cost} cookies`,
+                },
+                {
+                    name: "CPS",
+                    value: `${cps} cookies per second`,
+                },
+                {
+                    name: "You have",
+                    value: `${amount} ${name}`,
+                },
+                {
+                    name: `You ${afford} afford this`,
+                    value: `With your ${cookies} cookies`,
+                },
+                {
+                    name: "Use /buy to buy this!",
+                    value: "​", //Zero width space to make daddy discord happy
+                },
+            ],
             color: global.defaultColor,
             type: "rich",
         };
