@@ -34,7 +34,7 @@ export default class ClickCmd extends SlashCommand {
                 embeds: [
                     {
                         title: `${clickerUser.lastKnownUsername}'s Dashboard`,
-                        description: `Welcome to your dashboard!`,
+                        description: `Welcome to your dashboard!\nClick the button below to get more cookies!`,
                         fields: [
                             {
                                 name: "Cookies",
@@ -81,7 +81,7 @@ export default class ClickCmd extends SlashCommand {
                                 embeds: [
                                     {
                                         title: `${clickerUser.lastKnownUsername}'s Dashboard`,
-                                        description: `Welcome to your dashboard!`,
+                                        description: `Welcome to your dashboard!\nClick the button below to get more cookies!`,
                                         fields: [
                                             {
                                                 name: "Cookies",
