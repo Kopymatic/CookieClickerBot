@@ -1,4 +1,4 @@
-import Eris, { ActionRowComponents, ComponentInteraction, InteractionContent } from "eris";
+import { ActionRowComponents, ComponentInteraction, InteractionContent } from "eris";
 import { ClickerUser } from "../models";
 import InteractionUtils from "../utils/InteratctionUtils";
 import SlashCommand from "../utils/SlashCommand";

@@ -1,9 +1,8 @@
-import Eris, { Command, InteractionContent } from "eris";
+import Eris, { InteractionContent } from "eris";
 import { ClickerUser } from "../models";
 import InteractionUtils from "../utils/InteratctionUtils";
 import SlashCommand from "../utils/SlashCommand";
 import global from "../global";
-import { ButtonPaginator } from "../utils/ButtonPaginator";
 import ref from "../utils/ClickerReference";
 import {
     ButtonStyles,
@@ -226,24 +225,21 @@ export default class BuyCmd extends SlashCommand {
                         title: `Buy ${building.internalName}`,
                         description: `You have **${clickerUser.cookies.toLocaleString(
                             "en-US"
-                        )}** cookies.\n\nTo buy 1 ${
+                        )}** cookies.\n\nTo buy 1 ${building.internalName} it will be ${clickerUser
+                            .getMultiCost(buildingID, 1)
+                            .toLocaleString("en-US")} cookies.\nTo buy 10 ${
                             building.internalName
-                        } it will be ${clickerUser.getMultiCost(
-                            buildingID,
-                            1
-                        )} cookies.\nTo buy 10 ${
+                        } it will be ${clickerUser
+                            .getMultiCost(buildingID, 10)
+                            .toLocaleString("en-US")} cookies.\nTo buy 100 ${
                             building.internalName
-                        } it will be ${clickerUser.getMultiCost(
-                            buildingID,
-                            10
-                        )} cookies.\nTo buy 100 ${
+                        } it will be ${clickerUser
+                            .getMultiCost(buildingID, 100)
+                            .toLocaleString("en-US")} cookies.\nTo buy max ${
                             building.internalName
-                        } it will be ${clickerUser.getMultiCost(
-                            buildingID,
-                            100
-                        )} cookies.\nTo buy max ${
-                            building.internalName
-                        } it will be ${clickerUser.getMultiCost(buildingID, maxBuy)} cookies.`,
+                        } it will be ${clickerUser
+                            .getMultiCost(buildingID, maxBuy)
+                            .toLocaleString("en-US")} cookies.`,
                         color: global.defaultColor,
                     },
                 ],

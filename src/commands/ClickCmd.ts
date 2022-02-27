@@ -1,4 +1,4 @@
-import Eris, { ActionRowComponents, ComponentInteraction, InteractionContent } from "eris";
+import { ActionRowComponents, ComponentInteraction, EmbedOptions, InteractionContent } from "eris";
 import { ClickerUser } from "../models";
 import InteractionUtils from "../utils/InteratctionUtils";
 import SlashCommand from "../utils/SlashCommand";
@@ -30,34 +30,35 @@ export default class ClickCmd extends SlashCommand {
                 emoji: { name: "🍪" },
             };
 
-            let message: InteractionContent = {
-                embeds: [
+            let embeds: EmbedOptions[] = []; //TODO: This will allow for golden cookies
+            embeds.push({
+                title: `${clickerUser.lastKnownUsername}'s Dashboard`,
+                description: `Welcome to your dashboard!\nClick the button below to get more cookies!`,
+                fields: [
                     {
-                        title: `${clickerUser.lastKnownUsername}'s Dashboard`,
-                        description: `Welcome to your dashboard!\nClick the button below to get more cookies!`,
-                        fields: [
-                            {
-                                name: "Cookies",
-                                value: `You have **${clickerUser.cookies.toLocaleString(
-                                    "en-US"
-                                )}** cookies!`,
-                            },
-                            {
-                                name: "Cookies Per Second",
-                                value: `You are making **${clickerUser
-                                    .getCPS()
-                                    .toLocaleString("en-US")}** cookies per second!`,
-                            },
-                            {
-                                name: `Its been ${secsSinceLastUpdate} seconds since the last update`,
-                                value: `You made ${Math.round(
-                                    secsSinceLastUpdate * clickerUser.getCPS()
-                                ).toLocaleString("en-US")} cookies in that time!`,
-                            },
-                        ],
-                        color: global.defaultColor,
+                        name: "Cookies",
+                        value: `You have **${clickerUser.cookies.toLocaleString(
+                            "en-US"
+                        )}** cookies!`,
+                    },
+                    {
+                        name: "Cookies Per Second",
+                        value: `You are making **${clickerUser
+                            .getCPS()
+                            .toLocaleString("en-US")}** cookies per second!`,
+                    },
+                    {
+                        name: `Its been ${secsSinceLastUpdate} seconds since the last update`,
+                        value: `You made ${Math.round(
+                            secsSinceLastUpdate * clickerUser.getCPS()
+                        ).toLocaleString("en-US")} cookies in that time!`,
                     },
                 ],
+                color: global.defaultColor,
+            });
+
+            let message: InteractionContent = {
+                embeds: embeds,
                 components: [
                     {
                         type: ComponentTypes.ActionRow,
